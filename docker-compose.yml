@@ -1,0 +1,33 @@
+version: "3"
+services:
+    go:
+        build:
+            context: ./go
+        container_name: mygo
+        ports:
+            - 8080:8080
+        volumes:
+            - ./go/src:/go/src
+        working_dir: /go/src
+        tty: true
+
+    db:
+        image: mysql:8.0
+        container_name: mydb
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: sns
+            MYSQL_USER: myuser
+            MYSQL_PASSWORD: password
+            TZ: 'Asia/Tokyo'
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+        volumes:
+            #- db-data:/var/lib/mysql
+            - ./db/my.cnf:/etc/mysql/conf.d/my.cnf
+            - ./db/initdb.d:/docker-entrypoint-initdb.d
+        ports:
+            - 3306:3306
+
+#volumes:
+#    db-data:
+#        driver: local
